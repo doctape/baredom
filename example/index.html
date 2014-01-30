@@ -1,0 +1,88 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=200, user-scalable=no" />
+    <style type="text/css">
+      html {
+        overflow: hidden;
+      }
+      body {
+        overflow: auto;
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        font-family: sans-serif;
+      }
+      #list {
+        overflow: scroll;
+        -webkit-overflow-scrolling: touch;
+        height: 500px;
+        position: absolute;
+        width: 200px;
+        background: url(wall.png);
+        background-image: url(spinner.gif), url(wall.png);
+        background-size: 27px 27px, 10px 11px;
+        background-repeat: no-repeat, repeat;
+        background-position: center, top left;
+      }
+      #list .el {
+        height: 26px;
+        width: 170px;
+        position: absolute;
+        padding: 10px;
+        margin: 0px 5px;
+        left: 0;
+        background: #68C900;
+        border-top: 2px solid rgba(255,255,255,.3);
+        border-bottom: 2px solid rgba(0,0,0,.3);
+      }
+      #count {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 5px;
+        font-size: .5em;
+        color: #fff;
+        background: rgba(0,0,0,.5);
+        z-index: 99;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="count"></div>
+    <div id="list"></div>
+    <script type="text/javascript" src="../baredom.js"></script>
+    <script type="text/javascript">
+      var elements = [], i;
+      // Mobile Safari Height Limit: 5242588px (2**19), Incomplete Node 10485
+      for (i = 0; i < 10485; i++) {
+        elements.push(i);
+      }
+      window.addEventListener('load', function () {
+        var list = document.getElementById('list'),
+            count = document.getElementById('count'), bdlist;
+        list.style.height = document.body.clientHeight;
+        bdlist = baredom.createList({
+          el: list,
+          collection: elements,
+          subviewHeight: 50,
+          subviewOverscroll: 200,
+          createSubview: function (div) {
+            div.className = 'el';
+            var text = document.createTextNode('');
+            div.appendChild(text);
+          },
+          renderSubview: function (i, div) {
+            div.lastChild.data = 'Node: ' + elements[i];
+          }
+        });
+        setInterval(function () {
+          count.innerHTML = '' + (bdlist.timer/bdlist.eventCounter).toFixed(2) + 'ms';
+          count.innerHTML += ' (' + (bdlist.eventCounter) + ' e/s)';
+          count.innerHTML += ' (' + bdlist.displayLength + '/' + bdlist.bufferLength + ')';
+          bdlist.eventCounter = 0;
+          bdlist.timer = 0;
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>
